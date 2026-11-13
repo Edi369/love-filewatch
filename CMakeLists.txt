@@ -1916,7 +1916,7 @@ add_library(liblove SHARED
 	src/modules/love/boot.lua
 	src/modules/love/callbacks.lua
 	src/modules/love/jitsetup.lua
-    # src/scripts/nogame.lua
+        src/scripts/nogame.lua
 )
 set_target_properties(liblove PROPERTIES
 	C_VISIBILITY_PRESET hidden
