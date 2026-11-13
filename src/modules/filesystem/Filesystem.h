@@ -33,6 +33,8 @@
 #include <string>
 #include <vector>
 
+#include "Filewatcher.h"
+
 // In Windows, we would like to use "LOVE" as the
 // application folder, but in Linux, we like .love.
 #define LOVE_APPDATA_PREFIX ""
@@ -316,10 +318,14 @@ public:
 	 **/
 	virtual std::string getExecutablePath() const;
 
+	void pump();
+
 	STRINGMAP_CLASS_DECLARE(FileType);
 	STRINGMAP_CLASS_DECLARE(CommonPath);
 	STRINGMAP_CLASS_DECLARE(MountPermissions);
 	STRINGMAP_CLASS_DECLARE(LoadMode);
+
+	Filewatcher filewatcher;
 
 protected:
 

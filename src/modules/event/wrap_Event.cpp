@@ -25,6 +25,8 @@
 #include "common/Reference.h"
 #include "sdl/Event.h"
 
+#include "filesystem/Filesystem.h"
+
 #include <algorithm>
 
 // Shove the wrap_Event.lua code directly into a raw string literal.
@@ -38,6 +40,7 @@ namespace event
 {
 
 #define instance() (Module::getInstance<Event>(Module::M_EVENT))
+#define instanceFile() (Module::getInstance<filesystem::Filesystem>(Module::M_FILESYSTEM))
 
 static int luax_pushmessage(lua_State *L, const Message &m)
 {
@@ -68,6 +71,7 @@ int w_pump(lua_State *L)
 {
 	float waitTimeout = (float)luaL_optnumber(L, 1, 0.0f);
 	luax_catchexcept(L, [&]() { instance()->pump(waitTimeout); });
+	luax_catchexcept(L, [&]() { instanceFile()->pump(); });
 	return 0;
 }
 

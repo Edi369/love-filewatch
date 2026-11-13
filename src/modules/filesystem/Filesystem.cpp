@@ -51,7 +51,7 @@ love::Type Filesystem::type("filesystem", &Module::type);
 
 Filesystem::Filesystem(const char *name)
 	: Module(M_FILESYSTEM, name)
-{
+	, filewatcher() {
 }
 
 Filesystem::~Filesystem()
@@ -201,6 +201,10 @@ std::string Filesystem::canonicalizeRealPath(const std::string &p) const
 	{
 		return p;
 	}
+}
+
+void Filesystem::pump() {
+	filewatcher.pump();
 }
 
 std::string Filesystem::getExecutablePath() const

@@ -28,6 +28,9 @@ function love.createhandlers()
 
 	-- Standard callback handlers.
 	love.handlers = setmetatable({
+        filechanged = function(t,f)
+            if love.filechanged then return love.filechanged(t,f) end
+        end,
 		keypressed = function (b,s,r)
 			if love.keypressed then return love.keypressed(b,s,r) end
 		end,

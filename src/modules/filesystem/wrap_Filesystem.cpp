@@ -1049,6 +1049,25 @@ int extloader(lua_State *L)
 	return 1;
 }
 
+int w_setWatcherDirectory(lua_State *L) {
+	if (lua_isnoneornil(L, 1))
+	{
+		instance()->filewatcher.tryClose();
+		return 0;
+	}
+
+	std::string path = luaL_checkstring(L, 1);
+
+	if (path.empty())
+	{
+		path = ".";
+	}
+
+	instance()->filewatcher.watchFile(path);
+
+	return 0;
+}
+
 // List of functions to wrap.
 static const luaL_Reg functions[] =
 {
@@ -1094,6 +1113,7 @@ static const luaL_Reg functions[] =
 	{ "setRequirePath", w_setRequirePath },
 	{ "getCRequirePath", w_getCRequirePath },
 	{ "setCRequirePath", w_setCRequirePath },
+	{ "setWatcherDirectory", w_setWatcherDirectory },
 
 	// Deprecated
 	{ "newFile", w_newFile },
