@@ -55,7 +55,7 @@ public:
 
     virtual void watchFile(const std::string &path);
     void pump();
-    void tryClose() const;
+    void closeWatch() const;
 
     Filewatcher();
     ~Filewatcher();

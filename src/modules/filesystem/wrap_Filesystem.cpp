@@ -1052,7 +1052,7 @@ int extloader(lua_State *L)
 int w_setWatcherDirectory(lua_State *L) {
 	if (lua_isnoneornil(L, 1))
 	{
-		instance()->filewatcher.tryClose();
+		instance()->filewatcher.closeWatch();
 		return 0;
 	}
 

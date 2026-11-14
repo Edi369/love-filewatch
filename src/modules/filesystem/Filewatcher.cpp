@@ -34,6 +34,9 @@
 #include "unistd.h"
 #endif
 
+#ifdef LOVE_WINDOWS
+#endif
+
 #define instanceEvent() (Module::getInstance<event::Event>(Module::M_EVENT))
 
 // LOVE
@@ -49,10 +52,10 @@ Filewatcher::Filewatcher()
 
 Filewatcher::~Filewatcher()
 {
-	tryClose();
+	closeWatch();
 }
 
-void Filewatcher::tryClose() const
+void Filewatcher::closeWatch() const
 {
 #ifdef LOVE_LINUX
 	if (fd != -1)
@@ -77,14 +80,22 @@ void Filewatcher::dumpEvents()
 	std::vector<Variant> vargs;
 	vargs.reserve(2);
 
-	for (const Filewatcher::FileEvent& event : events) {
+	for (const Filewatcher::FileEvent& event : events)
+	{
 		vargs.clear();
 
 		const char *name = "unknow";
 		getConstant(event.Type, name);
 
+		std::string path = event.Path;
+
+		if (event.Path.rfind("./", 0 ) == 0 || event.Path.rfind(".\\", 0 ) == 0)
+		{
+			path = event.Path.substr(2);
+		}
+
 		vargs.push_back(Variant(name, std::strlen(name)));
-		vargs.push_back(Variant(event.Path.c_str(), event.Path.length()));
+		vargs.push_back(Variant(path.c_str(), path.length()));
 
 		StrongRef<event::Message> msg(new event::Message("filechanged", vargs), Acquire::NORETAIN);
 		eventmodule->push(msg);
@@ -157,13 +168,13 @@ void Filewatcher::pump()
 
 void Filewatcher::watchFile(const std::string &path)
 {
-	tryClose();
+	closeWatch();
 #ifdef LOVE_LINUX
 	fd = inotify_init1(IN_NONBLOCK | IN_CLOEXEC);
 
 	if (fd == -1)
 	{
-		printf("cant initiated fd\n");
+		printf("can`t initiated fd\n");
 		return;
 	}
 
@@ -196,6 +207,17 @@ void Filewatcher::watchFile(const std::string &path)
 		watchers[wd] = _path;
 	}
 
+#endif
+
+#ifdef LOVE_WINDOWS
+	//TODO: Implement Windows Api
+	auto wt = FindFirstChangeNotification(
+		path,
+		true,
+		FILE_NOTIFY_CHANGE_FILE_NAME
+		| FILE_NOTIFY_CHANGE_DIR_NAME
+		| FILE_NOTIFY_CHANGE_LAST_WRITE
+	);
 #endif
 
  	printf("log files started in %s\n", path.c_str());
